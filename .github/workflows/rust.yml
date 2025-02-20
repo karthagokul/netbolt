@@ -19,26 +19,21 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-      # Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Install Rust
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      # Cache dependencies
       - name: Cache Cargo Registry
         uses: actions/cache@v3
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      # Build project
       - name: Build Project
         run: cargo build --release
 
-      # Upload artifact
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -49,37 +44,24 @@ jobs:
     name: Create GitHub Release
     needs: build
     runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v') # Only run on tag pushes
+
     steps:
-      # Checkout repository
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Important: Fetch all tags
 
-      # Download all artifacts
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      # Create a tag named 'latest' if triggered by main branch
-      - name: Create 'latest' Tag
-        if: github.ref == 'refs/heads/main'
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git tag -f latest
-          git push origin latest --force
-
-      # Determine tag name: use pushed tag or 'latest'
-      - name: Set Tag Name
-        id: set_tag_name
-        run: echo "TAG_NAME=${{ github.ref_name == 'main' && 'latest' || github.ref_name }}" >> $GITHUB_ENV
-
-      # Create GitHub Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.TAG_NAME }}
-          name: Release ${{ env.TAG_NAME }}
+          tag_name: ${{ github.ref_name }} # Use the pushed tag name
+          name: Release ${{ github.ref_name }}
           body: |
             🚀 New Release - NetBolt
             - Cross-platform binaries for Windows, macOS, and Linux.
