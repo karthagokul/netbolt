@@ -2,9 +2,12 @@
 name = "netbolt"
 version = "0.1.0"
 edition = "2021"
+authors = ["Gokul Kartha <kartha.gokul@gmail.com>"]
+description = "Ultrafast Network Speed Test Tool written in Rust"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.11", features = ["blocking", "json"] }
+reqwest = { version = "0.11", features = ["stream"] }
 chrono = "0.4"
 futures = "0.3"
+indicatif = "0.17"
