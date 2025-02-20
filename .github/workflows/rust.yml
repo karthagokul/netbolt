@@ -63,9 +63,10 @@ jobs:
       - name: Upload Rust Binary to GitHub Release
         uses: taiki-e/upload-rust-binary-action@v1
         with:
-          # Specify the binary name (without extension)
           bin: netbolt
-          # Specify the target platform
           target: ${{ matrix.target }}
-          # GitHub token for uploading assets
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Exclude .d files using glob pattern
+          include: target/release/netbolt*
+          exclude: target/release/*.d
+      
