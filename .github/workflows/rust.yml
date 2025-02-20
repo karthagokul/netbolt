@@ -3,7 +3,7 @@ name: Release NetBolt
 on:
   push:
     branches:
-      - main    # Trigger on push to the main branch
+      - main    # Trigger on push to main branch
     tags:
       - 'v*'    # Trigger on version tags like v1.0.0
 
@@ -60,10 +60,19 @@ jobs:
         with:
           path: artifacts
 
-      # Determine tag name or default to 'latest'
+      # Create a tag named 'latest' if triggered by main branch
+      - name: Create 'latest' Tag
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git tag -f latest
+          git push origin latest --force
+
+      # Determine tag name: use pushed tag or 'latest'
       - name: Set Tag Name
         id: set_tag_name
-        run: echo "TAG_NAME=${{ github.ref_name || 'latest' }}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=${{ github.ref_name == 'main' && 'latest' || github.ref_name }}" >> $GITHUB_ENV
 
       # Create GitHub Release
       - name: Create Release
