@@ -3,7 +3,7 @@
 
 NetBolt is a high-performance command-line tool that measures network download and upload speeds using asynchronous HTTP requests. It is built with Rust for speed, efficiency, and reliability.
 
-## 🌟 Features
+## Features
 - **Download Speed Test:** Measures download speed using a 100MB file from Cloudflare.
 - **Upload Speed Test:** Measures upload speed using Postman Echo.
 - **Cross-Platform:** Works on Windows, macOS, and Linux.
